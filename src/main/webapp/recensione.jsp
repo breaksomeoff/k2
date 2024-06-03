@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="model.UserBean"%>
+    pageEncoding="ISO-8859-1" import="main.java.model.UserBean"%>
 <% if (session.getAttribute("registeredUser") == null) {
 		response.sendRedirect("loginPage.jsp");
 	}
 %>
-<jsp:useBean id="registeredUser" class="model.UserBean" scope="session"/>
+<jsp:useBean id="registeredUser" class="main.java.model.UserBean" scope="session"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,6 +13,20 @@
  	<title>Geek Factory - Aggiungi Recensione</title>
     <link rel="stylesheet" href="./css/account.css">
     <link rel="icon" href="./img/icon.png">
+    <script>
+        function validateInput() {
+            const pattern = /[<>"/']/;
+            const fields = ['testo'];
+            for (let i = 0; i < fields.length; i++) {
+                const field = document.getElementById(fields[i]).value;
+                if (pattern.test(field)) {
+                    alert('I campi non possono contenere caratteri speciali come <, >, ", \'');
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
 	<div class="header">
@@ -31,39 +45,15 @@
 				action = "RecensioneControl?action=aggiungiMod&emailRec=" + emailRec + "&codice=" + request.getParameter("codice");
 			}
 		%>
-		<form action="<%=action%>" METHOD="POST">
+		<form action="<%=action%>" METHOD="POST" onsubmit="return validateInput();">
 			<div class="user-details" style="display: block">
 				<div class="input-box">
-					<%
-						if (request.getParameter("voto") != null) {			
-					%>
 					<span class="details">Votazione (da 1 a 10)</span>
-					<input type="number" step="1" name="votazione" min="1" max="10" value="<%=Integer.parseInt(request.getParameter("voto"))%>" placeholder="1-10" required style="margin-bottom: 30px; width: 18%"/>
-					<%	
-						}
-						else {
-					%>
-					<span class="details">Votazione (da 1 a 10)</span>
-					<input type="number" step="1" name="votazione" min="1" max="10" placeholder="1-10" required style="margin-bottom: 30px; width: 18%"/>
-					<%
-						}
-					%>
+					<input type="number" step="1" name="votazione" min="1" max="10" value="<%=request.getParameter("voto") != null ? Integer.parseInt(request.getParameter("voto")) : "" %>" placeholder="1-10" required style="margin-bottom: 30px; width: 18%"/>
 				</div>
 				<div class="input-box">
-					<%
-						if (request.getParameter("testo") != null) {			
-					%>
 					<span class="details">Testo (opzionale)</span>
-					<textarea id="testo" name="testo" rows="4" cols="60" placeholder="Aggiungi testo della recensione (opzionale)..." style="resize: none; width: 600px; height: 160px" style="margin-bottom: 30px"><%=request.getParameter("testo")%></textarea> <!-- 93 -->
-					<%	
-						}
-						else {
-					%>
-					<span class="details">Testo (opzionale)</span>
-					<textarea id="testo" name="testo" rows="4" cols="60" placeholder="Aggiungi testo della recensione (opzionale)..." style="resize: none; width: 600px; height: 160px" style="margin-bottom: 30px"></textarea> <!-- 93 -->
-					<%
-						}
-					%>
+					<textarea id="testo" name="testo" rows="4" cols="60" placeholder="Aggiungi testo della recensione (opzionale)..." style="resize: none; width: 600px; height: 160px; margin-bottom: 30px"><%=request.getParameter("testo") != null ? request.getParameter("testo") : "" %></textarea>
 				</div>
 			</div>
 			<div class="button">
@@ -79,5 +69,4 @@
 		<jsp:include page="footer.jsp"/>
 	</div>
 </body>
-
 </html>

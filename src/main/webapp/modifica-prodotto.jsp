@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="model.UserBean, model.ProductBean"%>
+    pageEncoding="ISO-8859-1" import="main.java.model.UserBean, main.java.model.ProductBean"%>
 <% if (session.getAttribute("registeredUser") == null) {
 		response.sendRedirect("loginPage.jsp");
 	}
@@ -12,28 +12,42 @@
  	<title>Geek Factory - Modifica prodotto</title>
     <link rel="stylesheet" href="./css/account.css">
     <link rel="icon" href="./img/icon.png">
+    <script>
+        function validateInput() {
+            const pattern = /[<>"/']/;
+            const fields = ['nome', 'descrizione'];
+            for (let i = 0; i < fields.length; i++) {
+                const field = document.getElementById(fields[i]).value;
+                if (pattern.test(field)) {
+                    alert('I campi non possono contenere caratteri speciali come <, >, ", \'');
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
 	<div class="header">
 		<jsp:include page="header.jsp"/>
 	</div>
 	
-	<%	if (request.getAttribute("updateProd") != null) {
-			ProductBean bean = (ProductBean) request.getAttribute("updateProd");
-			
-			String tipologia = bean.getTipologia();
-			String tag = bean.getTag();
+	<% if (request.getAttribute("updateProd") != null) {
+		ProductBean bean = (ProductBean) request.getAttribute("updateProd");
+		
+		String tipologia = bean.getTipologia();
+		String tag = bean.getTag();
 	%>
 	
 	<div class="test">
 	<div class="container" style="height: 485px">
 		<div class="title">Modifica prodotto</div>
 		<div class="content">
-		<form action="ProductControl?action=modifica&codice=<%=bean.getCodice()%>" METHOD="POST">
+		<form action="ProductControl?action=modifica&codice=<%=bean.getCodice()%>" METHOD="POST" onsubmit="return validateInput();">
 			<div class="user-details">
 				<div class="input-box">
 					<span class="details">Nome prodotto</span>
-					<input type="text" name="nome" maxlength="50" placeholder="Inserire nome del prodotto" value="<%=bean.getNome()%>" required/>
+					<input type="text" id="nome" name="nome" maxlength="50" placeholder="Inserire nome del prodotto" value="<%=bean.getNome()%>" required/>
 				</div>
 				<div class="input-box">
 					<span class="details">Prezzo</span>
@@ -107,5 +121,4 @@
 		<jsp:include page="footer.jsp"/>
 	</div>	
 </body>
-
 </html>
